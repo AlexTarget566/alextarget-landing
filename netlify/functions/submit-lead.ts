@@ -50,7 +50,8 @@ async function sendToTelegram(lead: LeadPayload, b24: B24Result): Promise<boolea
     return false;
   }
 
-  const { name, contact, company, service, comment } = lead;
+  const { name, contact, company, service, comment, utm } = lead;
+  const ad = utm ? [utm.utm_source, utm.utm_campaign, utm.utm_content].filter(Boolean).join(" / ") : "";
   const text = [
     "🆕 Новая заявка с сайта AlexTarget",
     `Имя: ${name}`,
@@ -58,6 +59,7 @@ async function sendToTelegram(lead: LeadPayload, b24: B24Result): Promise<boolea
     company ? `Компания: ${company}` : null,
     `Услуга: ${service}`,
     comment ? `Комментарий: ${comment}` : null,
+    ad ? `Реклама: ${ad}` : null,
     b24.ok ? `✅ Сделка в Б24: ${b24.dealUrl ?? "создана"}` : `⚠️ Не попала в Б24 (${b24.reason}) — завести вручную`,
   ]
     .filter(Boolean)

@@ -1,4 +1,5 @@
 import type { LeadPayload } from "../types/lead";
+import { getUtm } from "../utils/utm";
 
 type StatusState = "pending" | "success" | "error";
 
@@ -35,6 +36,7 @@ export function initLeadForm(): void {
       service: String(formData.get("service") || "").trim(),
       comment: String(formData.get("comment") || "").trim() || undefined,
       consent: formData.get("consent") === "on",
+      utm: getUtm(),
     };
 
     const submitBtn = form.querySelector<HTMLButtonElement>('button[type="submit"]');

@@ -1,3 +1,5 @@
+import type { Utm } from "../utils/utm";
+
 export interface LeadPayload {
   name: string;
   contact: string;
@@ -5,6 +7,7 @@ export interface LeadPayload {
   service: string;
   comment?: string;
   consent: boolean;
+  utm?: Utm;
 }
 
 export const SERVICE_OPTIONS = [

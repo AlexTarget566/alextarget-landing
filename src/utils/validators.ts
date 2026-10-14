@@ -1,4 +1,5 @@
 import { SERVICE_OPTIONS, type LeadPayload } from "../types/lead";
+import { UTM_KEYS, type Utm } from "./utm";
 
 type ValidationResult =
   | { ok: true; data: LeadPayload }
@@ -6,6 +7,18 @@ type ValidationResult =
 
 function asTrimmedString(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
+}
+
+// Метки необязательны: берём только известные ключи и строки разумной длины, остальное молча отбрасываем
+function cleanUtm(value: unknown): Utm | undefined {
+  if (typeof value !== "object" || value === null) return undefined;
+  const record = value as Record<string, unknown>;
+  const utm: Utm = {};
+  for (const key of UTM_KEYS) {
+    const v = asTrimmedString(record[key]);
+    if (v && v.length <= 200) utm[key] = v;
+  }
+  return Object.keys(utm).length > 0 ? utm : undefined;
 }
 
 export function validateLead(input: unknown): ValidationResult {
@@ -41,6 +54,7 @@ export function validateLead(input: unknown): ValidationResult {
 
   return {
     ok: true,
-    data: { name, contact, company: company || undefined, service, comment: comment || undefined, consent },
+    data: { name, contact, company: company || undefined, service, comment: comment || undefined, consent,
+      utm: cleanUtm(record.utm) },
   };
 }
