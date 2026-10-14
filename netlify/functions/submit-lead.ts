@@ -67,7 +67,7 @@ async function sendToTelegram(lead: LeadPayload, b24: B24Result): Promise<boolea
     const response = await fetch(`${TELEGRAM_API}${token}/sendMessage`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ chat_id: chatId, text }),
+      body: JSON.stringify({ chat_id: chatId, text, link_preview_options: { is_disabled: true } }),
     });
     if (!response.ok) {
       console.error("submit-lead: Telegram API error", await response.text());
