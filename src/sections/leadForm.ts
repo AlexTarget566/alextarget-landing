@@ -24,7 +24,7 @@ export function initLeadForm(): void {
 
     // honeypot: если поле заполнено — это бот, тихо "успех", ничего никуда не шлём
     if (String(formData.get("company_site") || "").trim() !== "") {
-      showStatus("Заявка отправлена! Мы свяжемся с вами в течение 24 часов.", "success");
+      showStatus("Заявка отправлена! Я свяжусь с вами в течение 24 часов.", "success");
       form.reset();
       return;
     }
@@ -52,11 +52,11 @@ export function initLeadForm(): void {
 
       if (!response.ok) throw new Error("submit-lead request failed");
 
-      showStatus("Заявка отправлена! Мы свяжемся с вами в течение 24 часов.", "success");
+      showStatus("Заявка отправлена! Я свяжусь с вами в течение 24 часов.", "success");
       form.reset();
     } catch {
       showStatus(
-        "Не получилось отправить заявку. Напишите нам напрямую — контакты ниже.",
+        "Не получилось отправить заявку. Напишите мне напрямую — контакты ниже.",
         "error"
       );
     } finally {
