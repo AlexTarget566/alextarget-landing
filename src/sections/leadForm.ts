@@ -1,6 +1,6 @@
 import type { LeadPayload } from "../types/lead";
 import { getUtm } from "../utils/utm";
-import { newEventId, track } from "../utils/pixel";
+import { metaIds, newEventId, track } from "../utils/pixel";
 
 type StatusState = "pending" | "success" | "error";
 
@@ -30,6 +30,7 @@ export function initLeadForm(): void {
       return;
     }
 
+    const eventId = newEventId();
     const payload: LeadPayload = {
       name: String(formData.get("name") || "").trim(),
       contact: String(formData.get("contact") || "").trim(),
@@ -38,6 +39,7 @@ export function initLeadForm(): void {
       comment: String(formData.get("comment") || "").trim() || undefined,
       consent: formData.get("consent") === "on",
       utm: getUtm(),
+      meta: metaIds(eventId),
     };
 
     const submitBtn = form.querySelector<HTMLButtonElement>('button[type="submit"]');
@@ -53,7 +55,7 @@ export function initLeadForm(): void {
 
       if (!response.ok) throw new Error("submit-lead request failed");
 
-      track("Lead", { content_name: payload.service }, newEventId());
+      track("Lead", { content_name: payload.service }, eventId);
 
       showStatus("Заявка отправлена! Я свяжусь с вами в течение 24 часов.", "success");
       form.reset();

@@ -1,4 +1,4 @@
-import { SERVICE_OPTIONS, type LeadPayload } from "../types/lead";
+import { SERVICE_OPTIONS, type LeadPayload, type MetaIds } from "../types/lead";
 import { UTM_KEYS, type Utm } from "./utm";
 
 type ValidationResult =
@@ -19,6 +19,19 @@ function cleanUtm(value: unknown): Utm | undefined {
     if (v && v.length <= 200) utm[key] = v;
   }
   return Object.keys(utm).length > 0 ? utm : undefined;
+}
+
+// Необязательно: без номера события серверное событие просто не отправляется
+function cleanMeta(value: unknown): MetaIds | undefined {
+  if (typeof value !== "object" || value === null) return undefined;
+  const record = value as Record<string, unknown>;
+  const pick = (key: string) => {
+    const v = asTrimmedString(record[key]);
+    return v && v.length <= 500 ? v : undefined;
+  };
+  const event_id = pick("event_id");
+  if (!event_id) return undefined;
+  return { event_id, fbp: pick("fbp"), fbc: pick("fbc"), url: pick("url") };
 }
 
 export function validateLead(input: unknown): ValidationResult {
@@ -55,6 +68,6 @@ export function validateLead(input: unknown): ValidationResult {
   return {
     ok: true,
     data: { name, contact, company: company || undefined, service, comment: comment || undefined, consent,
-      utm: cleanUtm(record.utm) },
+      utm: cleanUtm(record.utm), meta: cleanMeta(record.meta) },
   };
 }

@@ -1,3 +1,5 @@
+import type { MetaIds } from "../types/lead";
+
 // Пиксель Meta: события для оптимизации рекламы. Базовый код (PageView) — в index.html.
 // Lead — успешная заявка с формы; Contact — первый контакт в канале (чат Б24, WhatsApp, Telegram), раз за визит.
 
@@ -26,6 +28,16 @@ export function track(event: string, params: Record<string, string> = {}, eventI
 // Один номер события для браузера и сервера — Meta по нему склеит дубль (понадобится для Conversions API)
 export function newEventId(): string {
   return crypto.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+}
+
+function cookie(name: string): string | undefined {
+  const hit = document.cookie.split("; ").find((c) => c.startsWith(`${name}=`));
+  return hit ? decodeURIComponent(hit.slice(name.length + 1)) : undefined;
+}
+
+// Для Conversions API: номер события + cookie пикселя (_fbp — браузер, _fbc — клик по рекламе)
+export function metaIds(eventId: string): MetaIds {
+  return { event_id: eventId, fbp: cookie("_fbp"), fbc: cookie("_fbc"), url: window.location.href.slice(0, 500) };
 }
 
 const contacted = new Set<string>();
