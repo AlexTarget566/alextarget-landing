@@ -1,5 +1,6 @@
 import type { LeadPayload } from "../types/lead";
 import { getUtm } from "../utils/utm";
+import { newEventId, track } from "../utils/pixel";
 
 type StatusState = "pending" | "success" | "error";
 
@@ -51,6 +52,8 @@ export function initLeadForm(): void {
       });
 
       if (!response.ok) throw new Error("submit-lead request failed");
+
+      track("Lead", { content_name: payload.service }, newEventId());
 
       showStatus("Заявка отправлена! Я свяжусь с вами в течение 24 часов.", "success");
       form.reset();
