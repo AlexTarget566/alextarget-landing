@@ -1,7 +1,7 @@
 import type { MetaIds } from "../types/lead";
 
 // Пиксель Meta: события для оптимизации рекламы. Базовый код (PageView) — в index.html.
-// Lead — успешная заявка с формы; Contact — первый контакт в канале (чат Б24, WhatsApp, Telegram), раз за визит.
+// Lead — успешная заявка с формы; Contact — первый контакт в канале (чат Б24, Telegram), раз за визит.
 
 type Fbq = (...args: unknown[]) => void;
 
@@ -49,7 +49,6 @@ function trackContact(channel: string): void {
 }
 
 const CHANNELS: Array<[RegExp, string]> = [
-  [/^https:\/\/wa\.me\//, "whatsapp"],
   [/^https:\/\/t\.me\//, "telegram"],
 ];
 
