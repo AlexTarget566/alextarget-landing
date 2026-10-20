@@ -827,6 +827,107 @@ select.field__input {
   align-self: flex-start;
 }
 
+/* ---------- Video ---------- */
+.hero__video-link {
+  color: var(--neon-cyan);
+  font-weight: 600;
+  font-size: 15px;
+  text-decoration: none;
+  border-bottom: 1px dashed currentColor;
+}
+
+.hero__video-link:hover {
+  color: var(--neon-green);
+}
+
+.video {
+  padding-block: 100px;
+  border-top: 1px solid var(--border);
+}
+
+.video .section-title,
+.video .section-subtitle {
+  text-align: center;
+  margin-inline: auto;
+}
+
+.video__frame {
+  position: relative;
+  margin: 48px auto 0;
+  max-width: 900px;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--surface-solid);
+  box-shadow: 0 0 40px rgba(57, 255, 143, 0.12);
+}
+
+.video__frame iframe,
+.video__play {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.video__play {
+  padding: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.video__poster {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.85;
+  transition: opacity 0.2s ease;
+}
+
+.video__play:hover .video__poster,
+.video__play:focus-visible .video__poster {
+  opacity: 1;
+}
+
+.video__play-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 84px;
+  height: 84px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--neon-green-strong), var(--neon-cyan));
+  box-shadow: 0 0 32px rgba(57, 255, 143, 0.55);
+  transition: transform 0.15s ease;
+}
+
+.video__play-icon::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 54%;
+  transform: translate(-50%, -50%);
+  border-style: solid;
+  border-width: 14px 0 14px 24px;
+  border-color: transparent transparent transparent #03130b;
+}
+
+.video__play:hover .video__play-icon {
+  transform: translate(-50%, -50%) scale(1.08);
+}
+
+.video__actions {
+  margin-top: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
 /* ---------- Responsive ---------- */
 @media (max-width: 900px) {
   .services__grid {
@@ -844,6 +945,19 @@ select.field__input {
 }
 
 @media (max-width: 640px) {
+  .video {
+    padding-block: 72px;
+  }
+
+  .video__frame {
+    margin-top: 32px;
+  }
+
+  .video__play-icon {
+    width: 64px;
+    height: 64px;
+  }
+
   .hero__content {
     padding-block: 96px 72px;
   }
