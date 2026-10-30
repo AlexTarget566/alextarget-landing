@@ -55,6 +55,7 @@ export function validateLead(input: unknown): ValidationResult {
   if (!service || !(SERVICE_OPTIONS as readonly string[]).includes(service)) {
     errors.push("Выберите услугу из списка");
   }
+  if (comment.length < 3) errors.push("Напишите ваш вопрос");
   if (!consent) errors.push("Нужно согласие на обработку персональных данных");
 
   if (name.length > 120) errors.push("Слишком длинное имя");
@@ -67,7 +68,8 @@ export function validateLead(input: unknown): ValidationResult {
 
   return {
     ok: true,
-    data: { name, contact, company: company || undefined, service, comment: comment || undefined, consent,
+    data: { name, contact, company: company || undefined, service, comment, consent,
+      chat: record.chat === "ok" || record.chat === "failed" ? record.chat : undefined,
       utm: cleanUtm(record.utm), meta: cleanMeta(record.meta) },
   };
 }

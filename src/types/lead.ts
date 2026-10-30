@@ -13,8 +13,9 @@ export interface LeadPayload {
   contact: string;
   company?: string;
   service: string;
-  comment?: string;
+  comment: string;           // вопрос — обязателен: уходит в чат первым сообщением
   consent: boolean;
+  chat?: "ok" | "failed";    // удалось ли открыть чат с ИИ (ok — сделку создаёт бот, не форма)
   utm?: Utm;
   meta?: MetaIds;
 }

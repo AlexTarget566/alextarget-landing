@@ -38,6 +38,13 @@
       fbq("init", "3262476027475083");
       fbq("track", "PageView");
     </script>
+    <!-- Microsoft Clarity (проект «AlexTarget сайт»): записи визитов, тепловые карты. ID публичный, секретов нет.
+         Поля форм Clarity скрывает сам, окно чата Б24 скрыто от записи (src/utils/b24chat.ts) -->
+    <script>
+      (function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+      t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+      y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","z5sfezwnzs");
+    </script>
   </head>
   <body>
     <noscript><img height="1" width="1" style="display:none" alt=""
@@ -278,7 +285,7 @@
             <p class="eyebrow">Заявка</p>
             <h2 class="section-title">Оставьте заявку</h2>
             <p class="section-subtitle">
-              Расскажите о задаче — обсудим её на бесплатной консультации в течение 24 часов.
+              Задайте вопрос — мой ИИ-помощник ответит сразу, здесь же в чате, а созвон назначим, когда вам удобно.
             </p>
           </div>
 
@@ -289,49 +296,46 @@
                 <input class="field__input" type="text" name="name" autocomplete="name" required />
               </label>
               <label class="field">
-                <span class="field__label">Контакт для связи *</span>
+                <span class="field__label">Телефон *</span>
                 <input
                   class="field__input"
-                  type="text"
+                  type="tel"
                   name="contact"
-                  placeholder="Телефон или Telegram (@ник)"
+                  placeholder="+7 7__ ___ __ __"
                   autocomplete="tel"
                   required
                 />
               </label>
             </div>
 
-            <div class="lead-form__row">
-              <label class="field">
-                <span class="field__label">Компания</span>
-                <input class="field__input" type="text" name="company" autocomplete="organization" />
-              </label>
-              <label class="field">
-                <span class="field__label">Интересующая услуга *</span>
-                <select class="field__input" name="service" required>
-                  <option value="" disabled selected>Выберите услугу</option>
-                  <option value="Таргетированная реклама (Instagram/Google)">
-                    Таргетированная реклама (Instagram/Google)
-                  </option>
-                  <option value="Внедрение ИИ в отдел продаж">Внедрение ИИ в отдел продаж</option>
-                  <option value="Автоматизация бизнес-процессов">
-                    Автоматизация бизнес-процессов
-                  </option>
-                  <option value="Не уверен, нужна консультация">
-                    Не уверен, нужна консультация
-                  </option>
-                </select>
-              </label>
-            </div>
-
             <label class="field">
-              <span class="field__label">Комментарий</span>
+              <span class="field__label">Ваш вопрос *</span>
               <textarea
                 class="field__input field__input--textarea"
                 name="comment"
                 rows="3"
-                placeholder="Кратко опишите задачу"
+                minlength="3"
+                maxlength="2000"
+                placeholder="Например: «сколько стоит реклама для кондитерской?» или «как ИИ будет отвечать моим клиентам?»"
+                required
               ></textarea>
+            </label>
+
+            <label class="field">
+              <span class="field__label">Интересующая услуга *</span>
+              <select class="field__input" name="service" required>
+                <option value="" disabled selected>Выберите услугу</option>
+                <option value="Таргетированная реклама (Instagram/Google)">
+                  Таргетированная реклама (Instagram/Google)
+                </option>
+                <option value="Внедрение ИИ в отдел продаж">Внедрение ИИ в отдел продаж</option>
+                <option value="Автоматизация бизнес-процессов">
+                  Автоматизация бизнес-процессов
+                </option>
+                <option value="Не уверен, нужна консультация">
+                  Не уверен, нужна консультация
+                </option>
+              </select>
             </label>
 
             <!-- honeypot: скрыто от людей, видно ботам -->
@@ -352,7 +356,7 @@
               </span>
             </label>
 
-            <button type="submit" class="btn btn--primary btn--full">Отправить заявку</button>
+            <button type="submit" class="btn btn--primary btn--full">Задать вопрос</button>
 
             <p class="lead-form__status" id="lead-form-status" role="status" aria-live="polite"></p>
           </form>
@@ -404,6 +408,12 @@
             интересна. Контакт из заявки (телефон или почта) может передаваться в Meta только
             в зашифрованном (хешированном) виде. Отключить это можно, запретив cookie в браузере
             или в настройках рекламы Meta.
+          </p>
+          <p>
+            Чтобы делать сайт удобнее, я использую Microsoft Clarity: он обезличенно записывает,
+            как посетители листают страницу и куда нажимают. Введённые в форму данные и переписка
+            в чате в эти записи не попадают. Clarity использует cookie; отключить это можно,
+            запретив cookie в браузере.
           </p>
           <p>
             Вы можете запросить удаление своих данных в любой момент, написав на контакты,

@@ -25,6 +25,15 @@ export function track(event: string, params: Record<string, string> = {}, eventI
   }
 }
 
+// Своё событие (не из стандартного списка Meta) — для аудиторий вроде «досмотрел урок до половины»
+export function trackCustom(event: string, params: Record<string, string | number> = {}): void {
+  try {
+    window.fbq?.("trackCustom", event, params);
+  } catch {
+    // пиксель заблокирован — не страшно
+  }
+}
+
 // Один номер события для браузера и сервера — Meta по нему склеит дубль (понадобится для Conversions API)
 export function newEventId(): string {
   return crypto.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`;

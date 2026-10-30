@@ -1,6 +1,7 @@
 import "./style.css";
 import { captureUtm } from "./utils/utm";
 import { initContactTracking } from "./utils/pixel";
+import { initB24Chat } from "./utils/b24chat";
 import { initHero } from "./sections/hero";
 import { initVideo } from "./sections/video";
 import { initServices } from "./sections/services";
@@ -9,6 +10,7 @@ import { initLeadForm } from "./sections/leadForm";
 import { initContact } from "./sections/contact";
 
 captureUtm();
+initB24Chat();
 initContactTracking();
 initHero();
 initVideo();

@@ -12,7 +12,7 @@ const META_DATASET_ID = "3262476027475083";
 const META_API = "https://graph.facebook.com/v24.0";
 const META_TIMEOUT_MS = 3000;
 
-type B24Result = { ok: true; dealUrl?: string } | { ok: false; reason: string };
+type B24Result = { ok: true; dealUrl?: string; viaChat?: boolean } | { ok: false; reason: string };
 
 function jsonResponse(statusCode: number, body: unknown) {
   return {
@@ -28,7 +28,7 @@ async function sendToB24(lead: LeadPayload): Promise<B24Result> {
   const secret = process.env.B24_LEAD_SECRET;
   if (!url || !secret) return { ok: false, reason: "Б24 не настроен" };
 
-  const { consent: _consent, meta: _meta, ...fields } = lead;
+  const { consent: _consent, meta: _meta, chat: _chat, ...fields } = lead;
   try {
     const response = await fetch(url, {
       method: "POST",
@@ -59,14 +59,22 @@ async function sendToTelegram(lead: LeadPayload, b24: B24Result): Promise<boolea
   const { name, contact, company, service, comment, utm } = lead;
   const ad = utm ? [utm.utm_source, utm.utm_campaign, utm.utm_content].filter(Boolean).join(" / ") : "";
   const text = [
-    "🆕 Новая заявка с сайта AlexTarget",
+    lead.chat === "ok"
+      ? "🆕 Заявка с сайта — ИИ-помощник уже ведёт разговор в чате"
+      : lead.chat === "failed"
+        ? "🆕 Заявка с сайта — ⚠️ чат с ИИ не открылся, позвони"
+        : "🆕 Новая заявка с сайта AlexTarget",
     `Имя: ${name}`,
     `Контакт: ${contact}`,
     company ? `Компания: ${company}` : null,
     `Услуга: ${service}`,
-    comment ? `Комментарий: ${comment}` : null,
+    comment ? `Вопрос: ${comment}` : null,
     ad ? `Реклама: ${ad}` : null,
-    b24.ok ? `✅ Сделка в Б24: ${b24.dealUrl ?? "создана"}` : `⚠️ Не попала в Б24 (${b24.reason}) — завести вручную`,
+    b24.ok && b24.viaChat
+      ? "Сделку создаст бот; выжимка придёт сюда, когда человек будет готов к созвону."
+      : b24.ok
+        ? `✅ Сделка в Б24: ${b24.dealUrl ?? "создана"}`
+        : `⚠️ Не попала в Б24 (${b24.reason}) — завести вручную`,
   ]
     .filter(Boolean)
     .join("\n");
@@ -164,7 +172,8 @@ export const handler: Handler = async (event) => {
 
   // Сначала Б24 (чтобы в Telegram ушла ссылка на сделку), Telegram — страховка: заявка не теряется,
   // если хотя бы один канал её принял
-  const b24 = await sendToB24(result.data);
+  // Чат с ИИ открылся — сделку создаёт бот (иначе у человека было бы две сделки)
+  const b24: B24Result = result.data.chat === "ok" ? { ok: true, viaChat: true } : await sendToB24(result.data);
   const [telegramOk] = await Promise.all([sendToTelegram(result.data, b24), sendToMeta(result.data, event)]);
 
   if (!b24.ok && !telegramOk) {
