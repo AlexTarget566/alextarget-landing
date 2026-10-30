@@ -1,6 +1,7 @@
 import type { LeadPayload } from "../types/lead";
 import { getUtm } from "../utils/utm";
 import { metaIds, newEventId, track } from "../utils/pixel";
+import { askInChat } from "../utils/b24chat";
 
 type StatusState = "pending" | "success" | "error";
 
@@ -36,7 +37,7 @@ export function initLeadForm(): void {
       contact: String(formData.get("contact") || "").trim(),
       company: String(formData.get("company") || "").trim() || undefined,
       service: String(formData.get("service") || "").trim(),
-      comment: String(formData.get("comment") || "").trim() || undefined,
+      comment: String(formData.get("comment") || "").trim(),
       consent: formData.get("consent") === "on",
       utm: getUtm(),
       meta: metaIds(eventId),
@@ -44,7 +45,12 @@ export function initLeadForm(): void {
 
     const submitBtn = form.querySelector<HTMLButtonElement>('button[type="submit"]');
     submitBtn?.setAttribute("disabled", "true");
-    showStatus("Отправляем заявку…", "pending");
+    showStatus("Передаю ваш вопрос ИИ-помощнику…", "pending");
+
+    // Сначала чат: вопрос уходит первым сообщением, ИИ-помощник отвечает сразу. Сделку тогда создаёт бот;
+    // если чат не открылся — заявка идёт старым путём (сделка из формы + мне «позвонить»)
+    const chatOk = await askInChat(`${payload.comment}\n\n— ${payload.name}, ${payload.contact}`, payload.name);
+    payload.chat = chatOk ? "ok" : "failed";
 
     try {
       const response = await fetch("/api/submit-lead", {
@@ -53,11 +59,16 @@ export function initLeadForm(): void {
         body: JSON.stringify(payload),
       });
 
-      if (!response.ok) throw new Error("submit-lead request failed");
+      if (!response.ok && !chatOk) throw new Error("submit-lead request failed");
 
       track("Lead", { content_name: payload.service }, eventId);
 
-      showStatus("Заявка отправлена! Я свяжусь с вами в течение 24 часов.", "success");
+      showStatus(
+        chatOk
+          ? "Готово! ИИ-помощник уже отвечает в окне чата ↘ Там же договоримся о созвоне."
+          : "Заявка отправлена! Я свяжусь с вами в течение 24 часов.",
+        "success"
+      );
       form.reset();
     } catch {
       showStatus(
