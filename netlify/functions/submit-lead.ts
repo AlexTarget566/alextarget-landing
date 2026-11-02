@@ -28,7 +28,8 @@ async function sendToB24(lead: LeadPayload): Promise<B24Result> {
   const secret = process.env.B24_LEAD_SECRET;
   if (!url || !secret) return { ok: false, reason: "Б24 не настроен" };
 
-  const { consent: _consent, meta: _meta, chat: _chat, ...fields } = lead;
+  // chat уходит в n8n: «ok» — сделку создаст бот, n8n только проверит через 10 мин, что она появилась
+  const { consent: _consent, meta: _meta, ...fields } = lead;
   try {
     const response = await fetch(url, {
       method: "POST",
@@ -172,8 +173,12 @@ export const handler: Handler = async (event) => {
 
   // Сначала Б24 (чтобы в Telegram ушла ссылка на сделку), Telegram — страховка: заявка не теряется,
   // если хотя бы один канал её принял
-  // Чат с ИИ открылся — сделку создаёт бот (иначе у человека было бы две сделки)
-  const b24: B24Result = result.data.chat === "ok" ? { ok: true, viaChat: true } : await sendToB24(result.data);
+  // Чат с ИИ открылся — сделку создаёт бот (иначе у человека было бы две сделки); n8n получает только отметку,
+  // чтобы через 10 мин проверить, что бот её создал (иначе алерт). Сбой отметки заявку не роняет
+  const b24: B24Result =
+    result.data.chat === "ok"
+      ? (await sendToB24(result.data), { ok: true, viaChat: true })
+      : await sendToB24(result.data);
   const [telegramOk] = await Promise.all([sendToTelegram(result.data, b24), sendToMeta(result.data, event)]);
 
   if (!b24.ok && !telegramOk) {
