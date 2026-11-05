@@ -651,6 +651,10 @@ svg {
   font-size: 15px;
   outline: none;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  /* Не шире формы: список «Интересующая услуга» по самому длинному пункту растягивал страницу на телефоне
+     до 474 px — кнопка чата Б24 уезжала за край экрана (найдено 05.11.2026) */
+  min-width: 0;
+  max-width: 100%;
 }
 
 .field__input:focus {
@@ -939,7 +943,7 @@ select.field__input {
   }
 
   .lead__inner {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 32px;
   }
 }
