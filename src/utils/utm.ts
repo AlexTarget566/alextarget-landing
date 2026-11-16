@@ -1,6 +1,9 @@
 // UTM-метки рекламы: читаем из адреса при входе, помним 30 дней (заявку могут оставить не сразу).
 // Новый заход с метками перезаписывает старые — в сделку уходит последняя реклама, которая привела человека
-export const UTM_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"] as const;
+// gclid / gbraid / wbraid — метка клика Google Ads (автопометка): по ней n8n сообщает Google о заявке, и реклама
+// учится искать тех, кто оставляет заявки, а не просто кликает (16.11.2026)
+export const UTM_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term",
+  "gclid", "gbraid", "wbraid"] as const;
 export type UtmKey = (typeof UTM_KEYS)[number];
 export type Utm = Partial<Record<UtmKey, string>>;
 
