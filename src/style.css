@@ -493,6 +493,83 @@ svg {
   font-size: 15px;
 }
 
+/* ---------- Fit (кому подходит) ---------- */
+.fit {
+  padding-block: 100px;
+  border-top: 1px solid var(--border);
+}
+
+.fit .section-title,
+.fit .section-subtitle {
+  text-align: center;
+  margin-inline: auto;
+}
+
+.fit__grid {
+  margin-top: 48px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  max-width: 900px;
+  margin-inline: auto;
+}
+
+.fit__title--yes {
+  color: var(--neon-green);
+}
+
+.fit__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.fit__list li {
+  position: relative;
+  padding-left: 26px;
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.fit__list li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--neon-green);
+}
+
+.fit__list--no li {
+  color: var(--text-dim);
+}
+
+.fit__list--no li::before {
+  content: "—";
+  color: var(--text-dim);
+}
+
+.fit__note {
+  margin: 32px auto 0;
+  max-width: 640px;
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 15px;
+}
+
+@media (max-width: 900px) {
+  .fit__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .fit {
+    padding-block: 72px;
+  }
+}
+
 /* ---------- Cases ---------- */
 .cases {
   padding-block: 100px;
