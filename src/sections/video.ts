@@ -1,4 +1,5 @@
 import { track, trackCustom } from "../utils/pixel";
+import { openChat } from "../utils/b24chat";
 
 // Видео с YouTube («доступ по ссылке»): до клика — только обложка, плеер грузится по нажатию,
 // чтобы сайт не тянул YouTube у каждого посетителя. youtube-nocookie — режим без рекламных cookie.
@@ -59,25 +60,55 @@ function trackProgress(iframe: HTMLIFrameElement): void {
 export function initVideo(): void {
   const frame = document.querySelector<HTMLElement>(".video__frame");
   const button = frame?.querySelector<HTMLButtonElement>(".video__play");
-  const poster = frame?.querySelector<HTMLImageElement>(".video__poster");
+  const teaser = frame?.querySelector<HTMLVideoElement>(".video__teaser");
   const id = frame?.dataset.youtubeId;
   if (!frame || !button || !id) return;
 
-  // У свежего видео обложки в высоком качестве может ещё не быть — берём стандартную
-  poster?.addEventListener("error", () => {
-    if (!poster.src.includes("hqdefault")) poster.src = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
-  }, { once: true });
+  // Тизер (28 с без звука, ~350 КБ) грузится и играет, только когда блок видео на экране
+  if (teaser && "IntersectionObserver" in window) {
+    new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) {
+          teaser.preload = "auto";
+          teaser.play().catch(() => { /* автозапуск запрещён — остаётся обложка */ });
+        } else {
+          teaser.pause();
+        }
+      }
+    }, { threshold: 0.4 }).observe(teaser);
+  }
 
-  button.addEventListener("click", () => {
+  let started = false;
+  const play = (start: number, via: string) => {
     const iframe = document.createElement("iframe");
     const origin = encodeURIComponent(window.location.origin);
-    iframe.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1&origin=${origin}`;
+    iframe.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1&start=${start}&origin=${origin}`;
     iframe.title = "Как я строю систему продаж с ИИ";
     iframe.allow = "autoplay; encrypted-media; picture-in-picture; fullscreen";
     iframe.allowFullscreen = true;
     frame.replaceChildren(iframe);
-    track("ViewContent", { content_name: "video_site" });
-    try { window.clarity?.("event", "video_start"); } catch { /* Clarity не загрузился */ }
+    try { window.clarity?.("event", via); } catch { /* Clarity не загрузился */ }
+    if (!started) {
+      started = true;
+      track("ViewContent", { content_name: "video_site" });
+      try { window.clarity?.("event", "video_start"); } catch { /* Clarity не загрузился */ }
+    }
     trackProgress(iframe);
-  }, { once: true });
+  };
+
+  button.addEventListener("click", () => play(0, "video_play"), { once: true });
+
+  // Главы: старт с нужного места — 12 минут пугают, глава на 2 минуты — нет
+  document.querySelectorAll<HTMLButtonElement>(".video__chapters button").forEach((b) => {
+    b.addEventListener("click", () => {
+      play(Number(b.dataset.start) || 0, `video_chapter_${b.dataset.start}`);
+      frame.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+  });
+
+  // Вопрос по видео → сразу в чат ИИ-помощника; чата нет — к форме
+  document.getElementById("video-ask")?.addEventListener("click", () => {
+    try { window.clarity?.("event", "video_ask"); } catch { /* Clarity не загрузился */ }
+    if (!openChat()) document.getElementById("lead-form")?.scrollIntoView({ behavior: "smooth" });
+  });
 }

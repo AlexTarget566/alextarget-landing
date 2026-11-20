@@ -29,6 +29,17 @@ export function initB24Chat(): void {
   });
 }
 
+// Открыть чат ИИ-помощника (кнопка «Задать вопрос по видео»). false — виджет ещё не загрузился
+export function openChat(): boolean {
+  try {
+    if (!widget) return false;
+    widget.open();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function waitFor<T>(check: () => T | null | undefined, timeoutMs: number): Promise<T | null> {

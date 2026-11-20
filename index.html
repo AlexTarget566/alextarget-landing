@@ -79,7 +79,7 @@
           </p>
           <div class="hero__actions">
             <a href="#lead-form" class="btn btn--primary">Оставить заявку</a>
-            <a href="#video" class="hero__video-link">▶ Смотреть видео — 12 мин</a>
+            <a href="#video" class="hero__video-link">▶ Видео: где теряются ваши заявки</a>
             <span class="hero__note">Бесплатная консультация · 20 минут</span>
           </div>
         </div>
@@ -92,7 +92,7 @@
       <!-- VIDEO -->
       <section class="video" id="video">
         <div class="container">
-          <p class="eyebrow eyebrow--center">Видео · 12 минут</p>
+          <p class="eyebrow eyebrow--center">Видео · 12 минут · можно по главам</p>
           <h2 class="section-title">Посмотрите, как я работаю</h2>
           <p class="section-subtitle">
             Как реклама, ИИ-консультант и CRM складываются в одну систему продаж — и где в ней
@@ -100,20 +100,34 @@
           </p>
           <div class="video__frame" data-youtube-id="x_igYpvNp4k">
             <button type="button" class="video__play" aria-label="Смотреть видео: Как я строю систему продаж с ИИ">
-              <img
-                class="video__poster"
-                src="https://i.ytimg.com/vi/x_igYpvNp4k/maxresdefault.jpg"
-                alt=""
-                loading="lazy"
-                width="1280"
-                height="720"
-              />
+              <video
+                class="video__poster video__teaser"
+                src="/video/teaser.mp4"
+                poster="/video/teaser.jpg"
+                muted
+                loop
+                playsinline
+                preload="none"
+                width="854"
+                height="480"
+                aria-hidden="true"
+              ></video>
               <span class="video__play-icon" aria-hidden="true"></span>
+              <span class="video__teaser-label">Фрагменты · нажмите, чтобы смотреть целиком со звуком</span>
             </button>
           </div>
+          <ol class="video__chapters" aria-label="Главы видео">
+            <li><button type="button" data-start="55"><span>0:55</span> Кто я и почему не только реклама</button></li>
+            <li><button type="button" data-start="154"><span>2:34</span> Три эпохи ИИ: «мозг с руками»</button></li>
+            <li><button type="button" data-start="279"><span>4:39</span> Что это меняет в вашем бизнесе</button></li>
+            <li><button type="button" data-start="343"><span>5:43</span> Где рвётся цепочка продаж</button></li>
+            <li><button type="button" data-start="401"><span>6:41</span> Почему «увидел — купи» больше не работает</button></li>
+            <li><button type="button" data-start="548"><span>9:08</span> Ответ за секунды и учёт продаж</button></li>
+            <li><button type="button" data-start="652"><span>10:52</span> Как я работаю и кому не подойду</button></li>
+          </ol>
           <div class="video__actions">
-            <a href="#lead-form" class="btn btn--primary">Записаться на консультацию</a>
-            <span class="hero__note">Бесплатно · 20 минут</span>
+            <button type="button" class="btn btn--primary" id="video-ask">Задать вопрос по видео</button>
+            <span class="hero__note">Мой ИИ-помощник ответит сразу, здесь же в чате</span>
           </div>
         </div>
       </section>
